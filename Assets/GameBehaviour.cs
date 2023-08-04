@@ -5,6 +5,7 @@ namespace Game.Framework
     /// <summary>
     /// An object which interacts with services.
     /// </summary>
+    [DefaultExecutionOrder(-1000)]
     public abstract class GameBehaviour : MonoBehaviour, IResolverProvider
     {
         public IResolver Resolver { get; protected set; }

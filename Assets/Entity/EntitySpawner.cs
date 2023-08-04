@@ -2,6 +2,7 @@ using Game.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 /// <summary>
 /// Provides spawn behaviour for entities.
@@ -10,6 +11,8 @@ public class EntitySpawner : GameBehaviour
 {
     private IEntityStore store;
     private IGameSpace space;
+
+    public UnityEvent<Entity> OnSpawned;
 
     protected override void Setup()
     {
@@ -33,6 +36,8 @@ public class EntitySpawner : GameBehaviour
 
         var instance = Instantiate<Entity>(entity);
         instance.transform.SetParent(gameSpace.transform, false);
+
+        OnSpawned?.Invoke(instance);
 
         return instance;
     }

@@ -21,8 +21,8 @@ public class LocalPlayer : GameService<LocalPlayer>
         return entity;
     }
 
-    public void SpawnPlayer()
+    public void SetPlayerEntity(Entity entity)
     {
-
+        this.entity = entity;
     }
 }

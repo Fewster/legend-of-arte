@@ -9,7 +9,7 @@ public class Locomotion : MonoBehaviour
         var pos = transform.position;
 
         pos += input.x * transform.right * MoveSpeed * Time.deltaTime;
-        pos += input.y * transform.forward * MoveSpeed * Time.deltaTime;
+        pos += input.y * transform.up * MoveSpeed * Time.deltaTime;
 
         transform.position = pos;
     }
