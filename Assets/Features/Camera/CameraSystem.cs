@@ -28,7 +28,7 @@ public class CameraSystem : GameService<CameraSystem>
             return;
         }
 
-        var targetPos = Vector3.Lerp(followCamera.transform.position, target.position + new Vector3(0.0f, 0.0f, -1.0f), LerpRate);
+        var targetPos = Vector3.Lerp(followCamera.transform.position, target.position + new Vector3(0.0f, 0.0f, -1.0f), LerpRate * Time.deltaTime);
         followCamera.transform.position = targetPos;
     }
 }

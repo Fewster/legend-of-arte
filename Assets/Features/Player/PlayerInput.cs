@@ -44,8 +44,10 @@ public class PlayerInput : GameBehaviour
         locomotion = null;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
+        // TODO: Ensure this fixed update approach works...
+
         var pl = player.GetPlayerEntity();
         if(pl == null)
         {
