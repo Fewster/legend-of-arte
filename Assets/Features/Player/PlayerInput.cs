@@ -61,9 +61,71 @@ public class PlayerInput : GameBehaviour
             return;
         }
 
-        var inputX = Input.GetAxis("Horizontal");
-        var inputY = Input.GetAxis("Vertical");
+        var up = Input.GetKey(KeyCode.W);
+        var down = Input.GetKey(KeyCode.S);
+        var left = Input.GetKey(KeyCode.A);
+        var right = Input.GetKey(KeyCode.D);
 
-        locomotion.Move(new Vector2(inputX, inputY));
+        var mask = Direction.None;
+        if (up)
+        {
+            mask |= Direction.North;
+        }
+        if (down)
+        {
+            mask |= Direction.South;
+        }
+        if (left)
+        {
+            mask |= Direction.West;
+        }
+        if (right)
+        {
+            mask |= Direction.East;
+        }
+
+        if (mask != Direction.None)
+        {
+            locomotion.Move(mask);
+        }
+
+        //if (up)
+        //{
+        //    if (right)
+        //    {
+        //        locomotion.Move(Direction.NorthEast);
+        //    }
+        //    else if(left)
+        //    {
+        //        locomotion.Move(Direction.NorthWest);
+        //    }
+        //    else
+        //    {
+        //        locomotion.Move(Direction.North);
+        //    }
+        //}
+        //else if (down)
+        //{
+        //    if (right)
+        //    {
+        //        locomotion.Move(Direction.SouthEast);
+        //    }
+        //    else if (left)
+        //    {
+        //        locomotion.Move(Direction.SouthWest);
+        //    }
+        //    else
+        //    {
+        //        locomotion.Move(Direction.South);
+        //    }
+        //}
+
+        //var inputX = Input.GetAxis("Horizontal");
+        //var inputY = Input.GetAxis("Vertical");
+
+        //if((Mathf.Abs(inputX) + Mathf.Abs(inputY)) > 0.1f)
+        //{
+        // //   locomotion.Move(new Vector2(inputX, inputY));
+        //}
     }
 }
