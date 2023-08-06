@@ -7,6 +7,24 @@ public class Locomotion : MonoBehaviour
 
     public UnityEvent<Direction> OnDirectionSet;
 
+    public void Move(Direction direction)
+    {
+        // HACK: We don't yet have a good way to get the direction vector without just relying on Unity calculating the correct forward vector based on our expected rotations.
+        // We should improve this.
+
+        transform.rotation = direction.ToRotationAngle();
+
+        var position = transform.position;
+        position += transform.forward * MoveSpeed * Time.deltaTime;
+        position.z = 0.0f; // HACK: Z seems to drift without this.
+
+        transform.position = position;
+
+        // TODO: Bad practice, just the locomotion store its direction/make it queryable.
+        // NO need to fire events per-frame. This'll be expensive for many characters.
+        OnDirectionSet?.Invoke(direction);
+    }
+
     public void Move(Vector2 input)
     {
         var pos = transform.position;
