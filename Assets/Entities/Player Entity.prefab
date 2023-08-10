@@ -147,6 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MoveSpeed: 1
+  direction: 1
   OnDirectionSet:
     m_PersistentCalls:
       m_Calls:
