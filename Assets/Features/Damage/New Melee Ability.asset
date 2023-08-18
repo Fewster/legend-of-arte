@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: New Melee Ability
   m_EditorClassIdentifier: 
   Damage: 10
-  Radius: 1
+  Radius: 1.26
   Mask:
     serializedVersion: 2
     m_Bits: 4294967295
-  ConeAngle: 30
-  minAng: 90
+  ConeAngle: 290.9
+  minAng: 100.8
   maxAng: -90

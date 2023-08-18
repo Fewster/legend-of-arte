@@ -31,24 +31,33 @@ public class MeleeAbility : Ability
 
         var checkPoint = new Vector2(pos.x, pos.y);
 
+        DrawAttackCone(pos, caster, mapSpace);
+
         GatherNearbyEntities(checkPoint, caster, mapSpace);
 
+        foreach(var entity in entities)
+        {
+            var damageable = entity.GetComponent<IDamageable>();
+            if(damageable == null)
+            {
+                continue;
+            }
 
+            damageable.TakeDamage(Damage);
+        }
 
         if (entities.Count > 0)
         {
-            DrawCircle(checkPoint, 16, Radius, Color.green, mapSpace);
+            DrawIsoCircle(checkPoint, 32, Radius, Color.green, mapSpace);
         }
         else
         {
-            DrawCircle(checkPoint, 16, Radius, Color.red, mapSpace);
+            DrawIsoCircle(checkPoint, 32, Radius, Color.red, mapSpace);
         }
     }
 
-    private void GatherNearbyEntities(Vector2 position, Entity source, MapSpace mapSpace)
+    private void DrawAttackCone(Vector2 position, Entity source, MapSpace mapSpace)
     {
-        entities.Clear();
-
         var aimAngle = source.Direction.To2DAngle();
         var minAngle = aimAngle - ConeAngle;
         var maxAngle = aimAngle + ConeAngle;
@@ -60,12 +69,30 @@ public class MeleeAbility : Ability
         Vector2 minPos = position + (minDir * Radius);
         Vector2 maxPos = position + (maxDir * Radius);
 
-        Debug.DrawLine(position, position + (aimDir * Radius), Color.red);
+        Debug.DrawLine(position, position + (aimDir.normalized * Radius), Color.black);
         Debug.DrawLine(position, minPos, Color.white);
         Debug.DrawLine(position, maxPos, Color.white);
+    }
 
-      //  Debug.DrawLine(position, position + ((Vector2)minDir * 5.0f), Color.white, 1.0f);
-       // Debug.DrawLine(position, position + ((Vector2)maxDir * 5.0f), Color.white, 1.0f);
+    private void GatherNearbyEntities(Vector2 position, Entity source, MapSpace mapSpace)
+    {
+        entities.Clear();
+
+        var aimAngle = source.Direction.To2DAngle();
+        var minAngle = aimAngle - ConeAngle;
+        var maxAngle = aimAngle + ConeAngle;
+
+        var aimDir = mapSpace.GetMapDirection(aimAngle).normalized;
+        var minDir = mapSpace.GetMapDirection(minAngle).normalized;
+        var maxDir = mapSpace.GetMapDirection(maxAngle).normalized;
+
+        DrawCircle(position, 32, Radius, Color.cyan, mapSpace);
+
+        var minAng = Vector2.SignedAngle(aimDir, minDir);
+        var maxAng = Vector2.SignedAngle(aimDir, maxDir);
+
+        var minValue = Mathf.Min(minAng, maxAng);
+        var maxValue = Mathf.Max(minAng, maxAng);
 
         var hits = Physics2D.OverlapCircleAll(position, Radius, Mask);
         foreach(var hit in hits)
@@ -76,11 +103,20 @@ public class MeleeAbility : Ability
                 continue;
             }
 
-            //Physics2D.OverlapBox()
+            var closest = (Vector2)hit.transform.position;
 
-            var pos = hit.ClosestPoint(position);
+            if(Vector3.Distance(closest, position) > Radius)
+            {
+                continue;
+            }
 
-            Debug.DrawLine(position, pos, Color.magenta, 3.0f);
+            var dir = (closest - position).normalized;
+            var angle = Vector2.SignedAngle(aimDir, dir);
+
+            if (angle < minValue || angle > maxValue)
+            {
+                continue;
+            }
 
             entities.Add(hitEntity);
         }
@@ -88,12 +124,25 @@ public class MeleeAbility : Ability
 
     private void DrawCircle(Vector2 position, int segments, float radius, Color color, MapSpace mapSpace)
     {
+        var mod = (Mathf.PI * 2.0f) / segments;
+
+        for (int i = 0; i < segments; i++)
+        {
+            var a = position + new Vector2(radius * Mathf.Cos((i - 1) * mod), radius * Mathf.Sin((i - 1) * mod));
+            var b = position + new Vector2(radius * Mathf.Cos(i * mod), radius * Mathf.Sin(i * mod));
+
+            Debug.DrawLine(a, b, color);
+        }
+    }
+
+    private void DrawIsoCircle(Vector2 position, int segments, float radius, Color color, MapSpace mapSpace)
+    {
         var mod = 360.0f / segments;
 
         for (int i = 0; i < segments; i++)
         {
-            var a = position + mapSpace.GetMapDirection((i - 1) * mod);
-            var b = position + mapSpace.GetMapDirection((i) * mod);
+            var a = position + (mapSpace.GetMapDirection((i - 1) * mod) * radius);
+            var b = position + (mapSpace.GetMapDirection((i) * mod) * radius);
 
             //var a = position + new Vector2(radius * Mathf.Cos((i - 1) * mod), radius * Mathf.Sin((i - 1) * mod));
             //var b = position + new Vector2(radius * Mathf.Cos(i * mod), radius * Mathf.Sin(i * mod));
