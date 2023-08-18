@@ -30,43 +30,37 @@ public class MeleeAbility : Ability
         var fwd = caster.transform.forward;
 
         var checkPoint = new Vector2(pos.x, pos.y);
-        var dir = new Vector2(fwd.x, fwd.y);
 
-        var loco = caster.GetComponent<Locomotion>();
-        var dirAng = loco.Direction.To2DAngle();
-        var minAng = dirAng - ConeAngle;
-        var maxAng = dirAng + ConeAngle;
-
-        var minVec = mapSpace.GetMapDirection(minAng);
-        var maxVec = mapSpace.GetMapDirection(maxAng);
-        Debug.DrawLine(pos, (Vector2)pos + minVec, Color.cyan);
-        Debug.DrawLine(pos, (Vector2)pos + maxVec, Color.cyan);
-
-        GatherNearbyEntities(checkPoint, dir, caster);
+        GatherNearbyEntities(checkPoint, caster, mapSpace);
 
 
 
         if (entities.Count > 0)
         {
-            DrawCircle(checkPoint, 16, Radius, Color.green, 0.5f);
+            DrawCircle(checkPoint, 16, Radius, Color.green, mapSpace);
         }
         else
         {
-            DrawCircle(checkPoint, 16, Radius, Color.red, 0.5f);
+            DrawCircle(checkPoint, 16, Radius, Color.red, mapSpace);
         }
     }
 
-    private void GatherNearbyEntities(Vector2 position, Vector2 direction, Entity source)
+    private void GatherNearbyEntities(Vector2 position, Entity source, MapSpace mapSpace)
     {
         entities.Clear();
 
-        var minDir = (Vector2)(Quaternion.Euler(0, 0, minAng) * direction);
-        var maxDir = (Vector2)(Quaternion.Euler(0, 0, maxAng) * direction);
+        var aimAngle = source.Direction.To2DAngle();
+        var minAngle = aimAngle - ConeAngle;
+        var maxAngle = aimAngle + ConeAngle;
+
+        var aimDir = mapSpace.GetMapDirection(aimAngle);
+        var minDir = mapSpace.GetMapDirection(minAngle);
+        var maxDir = mapSpace.GetMapDirection(maxAngle);
 
         Vector2 minPos = position + (minDir * Radius);
         Vector2 maxPos = position + (maxDir * Radius);
 
-        Debug.DrawLine(position, position + (direction * Radius), Color.red);
+        Debug.DrawLine(position, position + (aimDir * Radius), Color.red);
         Debug.DrawLine(position, minPos, Color.white);
         Debug.DrawLine(position, maxPos, Color.white);
 
@@ -92,16 +86,19 @@ public class MeleeAbility : Ability
         }
     }
 
-    private void DrawCircle(Vector2 position, int segments, float radius, Color color, float duration)
+    private void DrawCircle(Vector2 position, int segments, float radius, Color color, MapSpace mapSpace)
     {
-        var mod = (Mathf.PI * 2.0f) / segments;
+        var mod = 360.0f / segments;
 
         for (int i = 0; i < segments; i++)
         {
-            var a = position + new Vector2(radius * Mathf.Cos((i - 1) * mod), radius * Mathf.Sin((i - 1) * mod));
-            var b = position + new Vector2(radius * Mathf.Cos(i * mod), radius * Mathf.Sin(i * mod));
+            var a = position + mapSpace.GetMapDirection((i - 1) * mod);
+            var b = position + mapSpace.GetMapDirection((i) * mod);
 
-            Debug.DrawLine(a, b, color, duration);
+            //var a = position + new Vector2(radius * Mathf.Cos((i - 1) * mod), radius * Mathf.Sin((i - 1) * mod));
+            //var b = position + new Vector2(radius * Mathf.Cos(i * mod), radius * Mathf.Sin(i * mod));
+
+            Debug.DrawLine(a, b, color);
         }
     }
 }
