@@ -14,6 +14,8 @@ public class CameraSystem : GameService<CameraSystem>
 
     public float LerpRate;
 
+    public Transform Focus { get { return target; } }
+
     public void SetFocus(Transform target)
     {
         this.target = target;
