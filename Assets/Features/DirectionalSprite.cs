@@ -11,33 +11,8 @@ public class DirectionalSprite : MonoBehaviour
 
     public void SetSprite(Direction direction)
     {
-        var idx = ToIndex(direction);
+        var idx = direction.ToIndex();
         OnSpriteSet?.Invoke(sprites[idx]);
-    }
-
-    private int ToIndex(Direction direction)
-    {
-        switch (direction)
-        {
-            case Direction.North:
-                return 0;
-            case Direction.East:
-                return 2;
-            case Direction.South:
-                return 4;
-            case Direction.West:
-                return 6;
-            case Direction.NorthEast:
-                return 1;
-            case Direction.SouthEast:
-                return 3;
-            case Direction.SouthWest:
-                return 5;
-            case Direction.NorthWest:
-                return 7;
-            default:
-                return 0;
-        }
     }
 }
 
@@ -57,6 +32,30 @@ public enum Direction
 
 public static class DirectionExtensions
 {
+    public static int ToIndex(this Direction direction)
+    {
+        switch (direction)
+        {
+            default:
+            case Direction.North:
+                return 0;
+            case Direction.NorthEast:
+                return 1;
+            case Direction.East:
+                return 2;
+            case Direction.SouthEast:
+                return 3;
+            case Direction.South:
+                return 4;
+            case Direction.SouthWest:
+                return 5;
+            case Direction.West:
+                return 6;
+            case Direction.NorthWest:
+                return 7;
+        }
+    }
+
     public static Quaternion ToRotationAngle(this Direction direction)
     {
         switch (direction)

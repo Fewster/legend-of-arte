@@ -86,7 +86,16 @@ public class PlayerInput : GameBehaviour
 
         if (mask != Direction.None)
         {
-            locomotion.Move(mask);
+            locomotion.Direction = mask;
+
+            var speed = 1.0f;
+
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                speed *= 2.0f;
+            }
+
+            locomotion.Move(speed);
         }
 
         //if (up)
