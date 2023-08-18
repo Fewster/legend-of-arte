@@ -56,6 +56,31 @@ public static class DirectionExtensions
         }
     }
 
+    public static float To2DAngle(this Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.North:
+                return 0.0f;
+            case Direction.NorthEast:
+                return 45.0f;
+            case Direction.East:
+                return 90.0f;
+            case Direction.SouthEast:
+                return 135.0f;
+            case Direction.South:
+                return 180.0f;
+            case Direction.SouthWest:
+                return 225.0f;
+            case Direction.West:
+                return 270.0f;
+            case Direction.NorthWest:
+                return 315.0f;
+            default:
+                return 0.0f;
+        }
+    }
+
     public static Quaternion ToRotationAngle(this Direction direction)
     {
         switch (direction)

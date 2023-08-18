@@ -39,6 +39,9 @@ public class Entity : GameBehaviour
 
     protected override void Cleanup()
     {
-        store.Unregister(this);
+        if (store != null)
+        {
+            store.Unregister(this);
+        }
     }
 }

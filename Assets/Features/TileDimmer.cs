@@ -24,7 +24,7 @@ public class TileDimmer : MonoBehaviour
         var pos = layout.WorldToCell(mPos);
         var wPos = layout.CellToWorld(pos);
 
-        Debug.Log(pos);
+        //Debug.Log(pos);
         return;
 
         var tile = map.GetTile(pos) as Tile;
