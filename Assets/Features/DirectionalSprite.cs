@@ -56,6 +56,31 @@ public static class DirectionExtensions
         }
     }
 
+    public static Vector2 ToDirection(this Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.North:
+                return new Vector2(0, 1);
+            case Direction.NorthEast:
+                return new Vector2(1, 1).normalized;
+            case Direction.East:
+                return new Vector2(1, 0);
+            case Direction.SouthEast:
+                return new Vector2(1,-1).normalized;
+            case Direction.South:
+                return new Vector2(0, -1);
+            case Direction.SouthWest:
+                return new Vector2(-1, -1).normalized;
+            case Direction.West:
+                return new Vector2(-1, 0);
+            case Direction.NorthWest:
+                return new Vector2(-1, 1).normalized;
+            default:
+                return Vector2.zero;
+        }
+    }
+
     public static float To2DAngle(this Direction direction)
     {
         switch (direction)

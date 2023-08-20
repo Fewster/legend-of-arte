@@ -9,6 +9,9 @@ public class MapSpace : GameService<MapSpace>
     public Direction dir;
     public float ang;
 
+    public GameObject Test;
+    public float Mod;
+
     /// <summary>
     /// Convert an angle (in degrees) with 0 representing north into a direction which maps into the isometric space.
     /// </summary>
@@ -47,6 +50,68 @@ public class MapSpace : GameService<MapSpace>
         }
     }
 
+    public float GetMapHeading(Vector2 direction)
+    {
+        var ang = Vector2.SignedAngle(direction, Vector2.right) + 90.0f;
+
+        return ang * Mathf.Deg2Rad;
+    }
+
+    private float EllipseDistance(float angle, float w, float h)
+    {
+        var w2 = Mathf.Pow(w, 2);
+        var h2 = Mathf.Pow(h, 2);
+        var x2 = Mathf.Pow(Mathf.Sin(angle), 2);
+        var y2 = Mathf.Pow(Mathf.Cos(angle), 2);
+
+        var distance = Mathf.Sqrt((w2 * x2) + (h2 * y2));
+        return distance;
+    }
+
+    public Vector2 PointOnEllipse(float heading)
+    {
+        var x = Grid.cellSize.x * Mathf.Sin(heading);
+        var y = Grid.cellSize.y * Mathf.Cos(heading);
+        return new Vector2(x, y);
+    }
+
+    public Vector2 PointOnCircle(float heading)
+    {
+        var x = Mathf.Sin(heading);
+        var y = Mathf.Cos(heading);
+        return new Vector2(x, y);
+    }
+
+    public Vector2 ToMapHeading(Vector2 dir)
+    {
+        var grid = Grid.cellSize;
+        return PointOnEllipse(Mathf.Atan2(dir.x * grid.y, dir.y * grid.x));
+    }
+
+    public Vector2 SquashToMap(float heading)
+    {
+        var x = Grid.cellSize.x * Mathf.Sin(heading);
+        var y = Grid.cellSize.y * Mathf.Cos(heading);
+        var pos = new Vector2(x, y);
+
+        return pos;
+
+        var dist = EllipseDistance(heading, Grid.cellSize.x, Grid.cellSize.y);
+
+        var vector = new Vector2(Mathf.Sin(heading), Mathf.Cos(heading)) * dist;
+
+        return vector;
+
+        Debug.DrawLine(Vector2.zero, Vector2.zero + vector, Color.magenta);
+
+        return Vector2.zero;
+    }
+
+    public Vector2 ToMap(Vector2 src)
+    {
+        return src * new Vector2(Grid.cellSize.x, Grid.cellSize.y);
+    }
+
     private void OnDrawGizmos()
     {
         if (Grid == null)
@@ -54,10 +119,38 @@ public class MapSpace : GameService<MapSpace>
             return;
         }
 
-        Debug.DrawLine(transform.position, transform.position + (Vector3)GetMapDirection(dir), Color.magenta);
-        Debug.DrawLine(transform.position, transform.position + (Vector3)GetMapDirection(ang), Color.yellow);
+        if(Test == null)
+        {
+            return;
+        }
 
-        DrawCircle(transform.position, 32, 1.0f, Color.red);
+        var dir = Test.transform.position - transform.position;
+        var vec = ToMapHeading(dir);
+
+
+        DrawEllipse(transform.position, 32, 1.0f, Color.yellow);
+
+        //var a = (-ang + 90.0f) * Mathf.Deg2Rad;
+        //var d1 = ((Vector2)transform.position + new Vector2(1.0f * Mathf.Cos(a), 1.0f * Mathf.Sin(a))) * 3.0f;
+        //Debug.DrawLine((Vector2)transform.position, (Vector2)transform.position + ToMap(d1), Color.cyan);
+
+        //Debug.DrawLine(transform.position, transform.position + (Vector3)GetMapDirection(dir), Color.magenta);
+        //Debug.DrawLine(transform.position, transform.position + (Vector3)GetMapDirection(ang), Color.yellow);
+
+        //DrawCircle(transform.position, 32, 1.0f, Color.red);
+    }
+
+    private void DrawEllipse(Vector2 position, int segments, float radius, Color color)
+    {
+        var mod = (Mathf.PI * 2.0f) / segments;
+
+        for (int i = 0; i < segments; i++)
+        {
+            var a = position + SquashToMap((i - 1) * mod);
+            var b = position + SquashToMap(i * mod);
+
+            Debug.DrawLine(a, b, color);
+        }
     }
 
     private void DrawCircle(Vector2 position, int segments, float radius, Color color)
