@@ -101,23 +101,44 @@ public class MeleeAbility : Ability
             // If the angle is outside the cone, ignore it.
             if (normalizedAngle < 0.0f || normalizedAngle > 1.0f)
             {
+               // continue;
+            }
+
+            var entitySize = hitEntity.Size * 0.5f;
+
+            // FLAW: Seems that there are some cases where the Left/Right points of the entity radius
+            // are not correctly mapped. This will be due to the none-equally spaced cone angle.
+            // The left/right cone vectors are not guaranteed to be the same angle relative to the aim direction.
+            // We may need to project the circle edges onto a radius around the player (basically a curve) to
+            // get pixel perfect circle collisions.
+
+            var right = ((Vector2)Vector3.Cross(dir.normalized, Vector3.forward)).normalized;
+            var e1 = checkPoint + (right * entitySize);
+            var e2 = checkPoint - (right * entitySize);
+
+            Debug.DrawLine(position, e1, Color.yellow);
+            Debug.DrawLine(position, e2, Color.yellow);
+
+            var heading1 = (e1 - position).normalized;
+            var heading2 = (e2 - position).normalized;
+
+            var ang1 = NormalizedAngle(mapMinDir, mapMaxDir, heading1);
+            var ang2 = NormalizedAngle(mapMinDir, mapMaxDir, heading2);
+
+            // If both points are not intersecting, the entity is not in the cone.
+            if((ang1 < 0.0f || ang1 > 1.0f) && (ang2 < 0.0f || ang2 > 1.0f))
+            {
                 continue;
             }
 
             // If the target is outside the entity radius (skewed into map space), ignore it.
             var heading = mapSpace.GetMapDirection(dir) * Radius;     
-            if(dir.magnitude > heading.magnitude)
+            if((dir.magnitude - entitySize) > heading.magnitude)
             {
                 continue;
             }
 
-            var right = ((Vector2)Vector3.Cross(dir.normalized, Vector3.forward)).normalized;
-            var e1 = checkPoint + (right * (hitEntity.Size * 0.5f));
-            var e2 = checkPoint - (right * (hitEntity.Size * 0.5f));
-
             Debug.DrawLine(position, position + heading, Color.magenta);
-            Debug.DrawLine(position, e1, Color.yellow);
-            Debug.DrawLine(position, e2, Color.yellow);
 
             //Debug.DrawLine(position, checkPoint, Color.green);
 
