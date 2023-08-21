@@ -26,12 +26,7 @@ public class MeleeAbility : Ability
         var mapSpace = caster.Resolver.Resolve<MapSpace>();
 
         var pos = caster.transform.position;
-        var rot = caster.transform.rotation;
-        var fwd = caster.transform.forward;
-
         var checkPoint = new Vector2(pos.x, pos.y);
-
-        //DrawAttackCone(pos, caster, mapSpace);
 
         GatherNearbyEntities(checkPoint, caster, mapSpace);
 
@@ -60,7 +55,7 @@ public class MeleeAbility : Ability
     /// Compute the normalized angle of aim relative to the given cone.
     /// Returns less than 0 if the aim vector is to the left side.
     /// Returns greater than 1 if the aim vector is to the right side.
-    /// /// Any value outside of the 0-1 range is considered outside the cone.
+    /// Any value outside of the 0-1 range is considered outside the cone.
     /// </summary>
     /// <param name="left"></param>
     /// <param name="right"></param>
@@ -73,73 +68,6 @@ public class MeleeAbility : Ability
         return checkAngle / funnelAngle;
     }
 
-    private static bool OvalIntersection(Vector2 point, Vector2 origin, float radiusX, float radiusY)
-    {
-        float a = radiusY;
-        float b = radiusX;
-
-        var x = point.x;
-        var y = point.y;
-        float h = origin.x;
-        float k = origin.y;
-
-        var theta = Mathf.Atan2(b * (y - k), a * (x - h));
-        var distance =
-            Mathf.Pow((x - h) * Mathf.Cos(theta) + (y - k) * Mathf.Sin(theta), 2.0f) / Mathf.Pow(a, 2.0f) + 
-            Mathf.Pow((x - h) * Mathf.Sin(theta) - (y - k) * Mathf.Cos(theta), 2.0f) / Mathf.Pow(b, 2.0f);
-
-        //Debug.Log(distance);
-
-        if (distance < 1.0f)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private void DrawAttackCone(Vector2 position, Entity source, MapSpace mapSpace)
-    {
-        {
-            // Compute aim angles
-            var worldAimDir = source.Direction.ToDirection();
-            var worldMinDir = Quaternion.Euler(0.0f, 0.0f, -ConeAngle) * worldAimDir;
-            var worldMaxDir = Quaternion.Euler(0.0f, 0.0f, ConeAngle) * worldAimDir;
-
-            // Convert poses to map space
-            var mapAimDir = mapSpace.ToMap(worldAimDir);
-            var mapMinDir = mapSpace.ToMap(worldMinDir);
-            var mapMaxDir = mapSpace.ToMap(worldMaxDir);
-
-            Vector2 minPos2 = position + mapMinDir * Radius * 3.0f;
-            Vector2 maxPos2 = position + mapMaxDir * Radius * 3.0f;
-
-            Debug.DrawLine(position, position + (mapAimDir.normalized * Radius), Color.black);
-            Debug.DrawLine(position, minPos2, Color.red);
-            Debug.DrawLine(position, maxPos2, Color.red);
-        }
-
-        var aimAngle = source.Direction.To2DAngle();
-        var minAngle = aimAngle - ConeAngle;
-        var maxAngle = aimAngle + ConeAngle;
-
-        var aimDir = mapSpace.GetMapDirection(aimAngle);
-        var minDir = mapSpace.GetMapDirection(minAngle);
-        var maxDir = mapSpace.GetMapDirection(maxAngle);
-
-        Vector2 minPos = position + (minDir * Radius);
-        Vector2 maxPos = position + (maxDir * Radius);
-
-        Debug.DrawLine(position, position + (aimDir.normalized * Radius), Color.black);
-        Debug.DrawLine(position, minPos, Color.white);
-        Debug.DrawLine(position, maxPos, Color.white);
-    }
-
-    private float MapDistance(Vector2 source, Vector2 other)
-    {
-        return 0.0f;
-    }
-
     private void GatherNearbyEntities(Vector2 position, Entity source, MapSpace mapSpace)
     {
         entities.Clear();
@@ -149,24 +77,12 @@ public class MeleeAbility : Ability
         var worldMinDir = (Quaternion.Euler(0.0f, 0.0f, -ConeAngle) * worldAimDir);
         var worldMaxDir = (Quaternion.Euler(0.0f, 0.0f, ConeAngle) * worldAimDir);
 
-        // Convert poses to map space
-        var mapAimDir = mapSpace.ToMap(worldAimDir);
+        // Convert poses to map space. This produces cone directions which map correctly to the world grid.
         var mapMinDir = mapSpace.ToMap(worldMinDir);
         var mapMaxDir = mapSpace.ToMap(worldMaxDir);
 
-        //var d1 = mapSpace.GetMapDirection(worldMinDir).normalized;
-        //var d2 = mapSpace.GetMapDirection(worldMaxDir).normalized;
-
-        //var mapMinDir = mapSpace.ToMap(Quaternion.Euler(0, 0, -ConeAngle) * worldAimDir);
-        //var mapMaxDir = mapSpace.ToMap(Quaternion.Euler(0, 0, ConeAngle) * worldAimDir);
-
-        //var mapMinDir = (Vector2)((Quaternion.Euler(0.0f, 0.0f, -ConeAngle) * mapAimDir).normalized);
-        //var mapMaxDir = (Vector2)((Quaternion.Euler(0.0f, 0.0f, ConeAngle) * mapAimDir).normalized);
-
         Debug.DrawLine(position, position + mapMinDir * Radius, Color.white);
         Debug.DrawLine(position, position + mapMaxDir * Radius, Color.white);
-
-        DrawCircle(position, 32, Radius, Color.cyan, mapSpace);
 
         var hits = Physics2D.OverlapCircleAll(position, Radius, Mask);
         foreach (var hit in hits)
@@ -179,7 +95,7 @@ public class MeleeAbility : Ability
 
             var checkPoint = (Vector2)hit.transform.position;
 
-            var dir = (checkPoint - position);
+            var dir = (checkPoint - position); // TODO: Why does a non-normalized value work, but a normalized value not.
             var normalizedAngle = NormalizedAngle(mapMinDir, mapMaxDir, dir);
 
             // If the angle is outside the cone, ignore it.
@@ -195,24 +111,17 @@ public class MeleeAbility : Ability
                 continue;
             }
 
+            var right = ((Vector2)Vector3.Cross(dir.normalized, Vector3.forward)).normalized;
+            var e1 = checkPoint + (right * (hitEntity.Size * 0.5f));
+            var e2 = checkPoint - (right * (hitEntity.Size * 0.5f));
+
             Debug.DrawLine(position, position + heading, Color.magenta);
+            Debug.DrawLine(position, e1, Color.yellow);
+            Debug.DrawLine(position, e2, Color.yellow);
 
             //Debug.DrawLine(position, checkPoint, Color.green);
 
             entities.Add(hitEntity);
-        }
-    }
-
-    private void DrawCircle(Vector2 position, int segments, float radius, Color color, MapSpace mapSpace)
-    {
-        var mod = (Mathf.PI * 2.0f) / segments;
-
-        for (int i = 0; i < segments; i++)
-        {
-            var a = position + new Vector2(radius * Mathf.Cos((i - 1) * mod), radius * Mathf.Sin((i - 1) * mod));
-            var b = position + new Vector2(radius * Mathf.Cos(i * mod), radius * Mathf.Sin(i * mod));
-
-            Debug.DrawLine(a, b, color);
         }
     }
 

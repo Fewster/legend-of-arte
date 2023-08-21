@@ -10,6 +10,7 @@ using UnityEngine.Events;
 public class Entity : GameBehaviour
 {
     [SerializeField] private string id;
+    [SerializeField] private float size = 1.0f;
     [SerializeField] private Direction direction;
 
     private IActiveEntities store;
@@ -32,6 +33,8 @@ public class Entity : GameBehaviour
             InvokeOnDirectionSet(value);
         }
     }
+
+    public float Size { get { return size; } }
 
     /// <summary>
     /// Guaranteed to be unique per entity.
