@@ -146,13 +146,22 @@ public class MeleeAbility : Ability
 
         // Compute aim angles
         var worldAimDir = source.Direction.ToDirection();
-        var worldMinDir = Quaternion.Euler(0.0f, 0.0f, -ConeAngle) * worldAimDir;
-        var worldMaxDir = Quaternion.Euler(0.0f, 0.0f, ConeAngle) * worldAimDir;
+        var worldMinDir = (Quaternion.Euler(0.0f, 0.0f, -ConeAngle) * worldAimDir);
+        var worldMaxDir = (Quaternion.Euler(0.0f, 0.0f, ConeAngle) * worldAimDir);
 
         // Convert poses to map space
         var mapAimDir = mapSpace.ToMap(worldAimDir);
-        var mapMinDir = mapSpace.ToMap(worldMinDir) * Radius;
-        var mapMaxDir = mapSpace.ToMap(worldMaxDir) * Radius;
+        var mapMinDir = mapSpace.ToMap(worldMinDir);
+        var mapMaxDir = mapSpace.ToMap(worldMaxDir);
+
+        //var d1 = mapSpace.GetMapDirection(worldMinDir).normalized;
+        //var d2 = mapSpace.GetMapDirection(worldMaxDir).normalized;
+
+        //var mapMinDir = mapSpace.ToMap(Quaternion.Euler(0, 0, -ConeAngle) * worldAimDir);
+        //var mapMaxDir = mapSpace.ToMap(Quaternion.Euler(0, 0, ConeAngle) * worldAimDir);
+
+        //var mapMinDir = (Vector2)((Quaternion.Euler(0.0f, 0.0f, -ConeAngle) * mapAimDir).normalized);
+        //var mapMaxDir = (Vector2)((Quaternion.Euler(0.0f, 0.0f, ConeAngle) * mapAimDir).normalized);
 
         Debug.DrawLine(position, position + mapMinDir * Radius, Color.white);
         Debug.DrawLine(position, position + mapMaxDir * Radius, Color.white);
@@ -170,25 +179,17 @@ public class MeleeAbility : Ability
 
             var checkPoint = (Vector2)hit.transform.position;
 
-            var mapScale = mapSpace.ToMap(new Vector2(1.0f, 1.0f));
-            if (!OvalIntersection(position, checkPoint, mapScale.x, mapScale.y))
-            {
-               // continue;
-            }
-
             var dir = (checkPoint - position);
             var normalizedAngle = NormalizedAngle(mapMinDir, mapMaxDir, dir);
 
-            //Debug.DrawLine(position, checkPoint, Color.red);
-
-            // If the angle is outside the range, ignore the entity.
+            // If the angle is outside the cone, ignore it.
             if (normalizedAngle < 0.0f || normalizedAngle > 1.0f)
             {
                 continue;
             }
 
-            var heading = mapSpace.ToMapHeading(dir) * Radius;
-            
+            // If the target is outside the entity radius (skewed into map space), ignore it.
+            var heading = mapSpace.GetMapDirection(dir) * Radius;     
             if(dir.magnitude > heading.magnitude)
             {
                 continue;

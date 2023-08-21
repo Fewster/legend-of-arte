@@ -68,21 +68,27 @@ public class MapSpace : GameService<MapSpace>
         return distance;
     }
 
-    public Vector2 PointOnEllipse(float heading)
+    private Vector2 PointOnEllipse(float heading)
     {
         var x = Grid.cellSize.x * Mathf.Sin(heading);
         var y = Grid.cellSize.y * Mathf.Cos(heading);
         return new Vector2(x, y);
     }
 
-    public Vector2 PointOnCircle(float heading)
+    private Vector2 PointOnCircle(float heading)
     {
         var x = Mathf.Sin(heading);
         var y = Mathf.Cos(heading);
         return new Vector2(x, y);
     }
 
-    public Vector2 ToMapHeading(Vector2 dir)
+    /// <summary>
+    /// Flatten a given world-space direction into map space.
+    /// This effectively maps the direction onto an ellipse, stretched to the perspective of the world grid.
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
+    public Vector2 GetMapDirection(Vector2 dir)
     {
         var grid = Grid.cellSize;
         return PointOnEllipse(Mathf.Atan2(dir.x * grid.y, dir.y * grid.x));
@@ -125,7 +131,7 @@ public class MapSpace : GameService<MapSpace>
         }
 
         var dir = Test.transform.position - transform.position;
-        var vec = ToMapHeading(dir);
+        var vec = GetMapDirection(dir);
 
 
         DrawEllipse(transform.position, 32, 1.0f, Color.yellow);
