@@ -43,11 +43,11 @@ public class MeleeAbility : Ability
 
         if (entities.Count > 0)
         {
-            DrawIsoCircle(checkPoint, 32, Radius, Color.green, mapSpace);
+            DrawIsoCircle(checkPoint, 128, Radius, Color.green, mapSpace);
         }
         else
         {
-            DrawIsoCircle(checkPoint, 32, Radius, Color.red, mapSpace);
+            DrawIsoCircle(checkPoint, 128, Radius, Color.red, mapSpace);
         }
     }
 
@@ -94,6 +94,9 @@ public class MeleeAbility : Ability
             }
 
             var checkPoint = (Vector2)hit.transform.position;
+            var entitySize = hitEntity.Size * 0.5f;
+
+            DrawIsoCircle(checkPoint, 128, entitySize, Color.green, mapSpace);
 
             var dir = (checkPoint - position); // TODO: Why does a non-normalized value work, but a normalized value not.
             var normalizedAngle = NormalizedAngle(mapMinDir, mapMaxDir, dir);
@@ -104,7 +107,6 @@ public class MeleeAbility : Ability
                // continue;
             }
 
-            var entitySize = hitEntity.Size * 0.5f;
 
             // FLAW: Seems that there are some cases where the Left/Right points of the entity radius
             // are not correctly mapped. This will be due to the none-equally spaced cone angle.
@@ -128,6 +130,8 @@ public class MeleeAbility : Ability
             // If both points are not intersecting, the entity is not in the cone.
             if((ang1 < 0.0f || ang1 > 1.0f) && (ang2 < 0.0f || ang2 > 1.0f))
             {
+                // TODO: Edge case: Angle can fully exceed the cone radius, say if the entity is larger than the radius of the cone...
+
                 continue;
             }
 
@@ -138,7 +142,12 @@ public class MeleeAbility : Ability
                 continue;
             }
 
+
+
+            // NOTE: Dir = heading I think...
+
             Debug.DrawLine(position, position + heading, Color.magenta);
+            Debug.DrawLine(position, position + (dir * 0.1f), Color.red);
 
             //Debug.DrawLine(position, checkPoint, Color.green);
 
