@@ -99,14 +99,29 @@ public class MeleeAbility : Ability
             DrawIsoCircle(checkPoint, 128, entitySize, Color.green, mapSpace);
 
             var dir = (checkPoint - position); // TODO: Why does a non-normalized value work, but a normalized value not.
-            var normalizedAngle = NormalizedAngle(mapMinDir, mapMaxDir, dir);
 
-            // If the angle is outside the cone, ignore it.
-            if (normalizedAngle < 0.0f || normalizedAngle > 1.0f)
+            var radiusPoint = mapSpace.GetMapDirection(dir) * Radius;
+
+            Debug.DrawLine(position, position + radiusPoint, Color.yellow);
+
+            // Get the closest point on the entity radius along the aim direction
+            var closest = checkPoint + mapSpace.GetMapDirection(-dir) * entitySize;
+            var distance = Vector2.Distance(position, closest);
+
+            if(distance > radiusPoint.magnitude)
             {
-               // continue;
+                Debug.DrawLine(position, closest, Color.red);
+            }
+            else
+            {
+                Debug.DrawLine(position, closest, Color.green);
             }
 
+
+
+
+
+            continue;
 
             // FLAW: Seems that there are some cases where the Left/Right points of the entity radius
             // are not correctly mapped. This will be due to the none-equally spaced cone angle.
