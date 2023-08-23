@@ -120,6 +120,8 @@ public class MapSpace : GameService<MapSpace>
 
     private void OnDrawGizmos()
     {
+        return;
+
         if (Grid == null)
         {
             return;
