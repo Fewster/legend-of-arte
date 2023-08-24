@@ -133,7 +133,14 @@ public class MapSpace : GameService<MapSpace>
         }
 
         var dir = Test.transform.position - transform.position;
-        var vec = GetMapDirection(dir);
+        var vec = (Vector3)GetMapDirection(dir);
+
+        var v1 = GetMapDirection(dir);
+        var v2 = ToMap(dir);
+
+        var refl = (Vector3)Vector2.Reflect(vec.normalized, Vector2.right);
+        Debug.DrawLine(transform.position, (Vector2)transform.position + v1, Color.magenta);
+        Debug.DrawLine(transform.position, (Vector2)transform.position + v2, Color.yellow);
 
 
         DrawEllipse(transform.position, 32, 1.0f, Color.yellow);

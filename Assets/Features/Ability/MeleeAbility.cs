@@ -68,6 +68,17 @@ public class MeleeAbility : Ability
         return checkAngle / funnelAngle;
     }
 
+    private Vector2 ClosestPoint(Vector2 a, Vector2 b, Vector2 p)
+    {
+        var dir = p - a;
+        var line = b - a;
+
+        var t = Vector2.Dot(dir, line) / line.sqrMagnitude;
+        t = Mathf.Clamp01(t);
+
+        return a + t * line;
+    }
+
     private void GatherNearbyEntities(Vector2 position, Entity source, MapSpace mapSpace)
     {
         entities.Clear();
@@ -80,9 +91,6 @@ public class MeleeAbility : Ability
         // Convert poses to map space. This produces cone directions which map correctly to the world grid.
         var mapMinDir = mapSpace.ToMap(worldMinDir);
         var mapMaxDir = mapSpace.ToMap(worldMaxDir);
-
-        Debug.DrawLine(position, position + mapMinDir * Radius, Color.white);
-        Debug.DrawLine(position, position + mapMaxDir * Radius, Color.white);
 
         var hits = Physics2D.OverlapCircleAll(position, Radius, Mask);
         foreach (var hit in hits)
@@ -98,33 +106,54 @@ public class MeleeAbility : Ability
 
             DrawIsoCircle(checkPoint, 128, entitySize, Color.green, mapSpace);
 
-            var dir = (checkPoint - position); // TODO: Why does a non-normalized value work, but a normalized value not.
-            var mapDir = mapSpace.GetMapDirection(dir);
+            var dir = (checkPoint - position).normalized;
+            var radiusDir = mapSpace.GetMapDirection(dir) * Radius;
 
-            var radiusPoint = mapSpace.GetMapDirection(dir) * Radius;
-
-            Debug.DrawLine(position, position + radiusPoint, Color.yellow);
+            Debug.DrawLine(position, position + radiusDir, Color.yellow);
 
             // Get the closest point on the entity radius along the aim direction
             var closest = checkPoint + mapSpace.GetMapDirection(-dir) * entitySize;
             var distance = Vector2.Distance(position, closest);
 
-            if(distance > radiusPoint.magnitude)
+            // Outside the radius?
+            if(distance > radiusDir.magnitude)
             {
-                Debug.DrawLine(position, closest, Color.red);
                 continue;
             }
-            else
+
+            var perp = Vector2.Perpendicular(radiusDir);
+            var eDir = mapSpace.GetMapDirection(perp);
+
+            var rDir = mapSpace.GetMapDirection(perp);
+            var refl = Vector2.Reflect(rDir, eDir);
+
+            // Hmm, kinda more reliable at 45 degrees, still not great
+            var r = Quaternion.Euler(0.0f, 0.0f, -45) * -dir;
+            var l = Quaternion.Euler(0.0f, 0.0f, 45) * -dir;
+
+            var rightEdge = checkPoint + mapSpace.GetMapDirection(r) * entitySize;
+            var leftEdge = checkPoint + mapSpace.GetMapDirection(l) * entitySize;
+
+            Debug.DrawLine(checkPoint, rightEdge, Color.red);
+            Debug.DrawLine(checkPoint, leftEdge, Color.green);
+
+            var h1 = (rightEdge - position).normalized;
+            var h2 = (leftEdge - position).normalized;
+
+            var a1 = NormalizedAngle(mapMinDir, mapMaxDir, h1);
+            var a2 = NormalizedAngle(mapMinDir, mapMaxDir, h2);
+
+            // If both points are not intersecting, the entity is not in the cone.
+            if ((a1 < 0.0f || a1 > 1.0f) && (a2 < 0.0f || a2 > 1.0f))
             {
-                Debug.DrawLine(position, closest, Color.green);
+                // TODO: Edge case: Angle can fully exceed the cone radius, say if the entity is larger than the radius of the cone...
+
+                continue;
             }
 
-            Vector2 dr = mapSpace.ToMap(Vector2.Perpendicular(dir.normalized)) * entitySize;
-            Vector2 dr2 = mapSpace.ToMap(-Vector2.Perpendicular(dir.normalized)) * entitySize;
+            entities.Add(hitEntity);
 
-            Debug.DrawLine(checkPoint, checkPoint + dr, Color.white);
-            Debug.DrawLine(checkPoint, checkPoint + dr2, Color.white);
-
+            continue;
 
             // FLAW: Seems that there are some cases where the Left/Right points of the entity radius
             // are not correctly mapped. This will be due to the none-equally spaced cone angle.
@@ -171,6 +200,10 @@ public class MeleeAbility : Ability
 
             entities.Add(hitEntity);
         }
+
+        // Draw cone angles
+        Debug.DrawLine(position, position + mapMinDir * Radius, Color.white);
+        Debug.DrawLine(position, position + mapMaxDir * Radius, Color.white);
     }
 
     private void DrawIsoCircle(Vector2 position, int segments, float radius, Color color, MapSpace mapSpace)
