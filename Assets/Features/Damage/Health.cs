@@ -6,12 +6,16 @@ public class Health : MonoBehaviour, IDamageable
     public int Current;
     public float Max;
 
+    public UnityEvent OnDamageTaken;
     public UnityEvent OnDeath;
 
     public void TakeDamage(int value)
     {
         Current -= value;
-        if(Current <= 0)
+
+        OnDamageTaken?.Invoke();
+
+        if (Current <= 0)
         {
             OnDeath?.Invoke();
 
