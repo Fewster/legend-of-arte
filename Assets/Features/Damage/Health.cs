@@ -11,7 +11,7 @@ public class Health : MonoBehaviour, IDamageable
         if(Current <= 0)
         {
             // Death
-            Debug.Log("Ded");
+            //Debug.Log("Ded");
         }
     }
 }
