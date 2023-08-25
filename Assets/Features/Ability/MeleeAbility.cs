@@ -11,10 +11,8 @@ public class MeleeAbility : Ability
     public float Radius = 1.0f;
     public LayerMask Mask;
 
+    [Range(0.0f, 90.0f)] // TODO: Consider having a minimum limitation of 22.5 to ensure no directional blindspots
     public float ConeAngle = 30.0f;
-
-    public float minAng = 30.0f;
-    public float maxAng = 30.0f;
 
     private void OnEnable()
     {
@@ -32,6 +30,9 @@ public class MeleeAbility : Ability
 
         foreach (var entity in entities)
         {
+            var entitySize = entity.Size * 0.5f;
+            DebugExtensions.DrawCircle(entity.transform.position, entitySize, Color.green, 0);
+
             var damageable = entity.GetComponent<IDamageable>();
             if (damageable == null)
             {
@@ -104,12 +105,10 @@ public class MeleeAbility : Ability
             var checkPoint = (Vector2)hit.transform.position;
             var entitySize = hitEntity.Size * 0.5f;
 
-            DebugExtensions.DrawCircle(checkPoint, entitySize, Color.green, 0);
+            DebugExtensions.DrawCircle(checkPoint, entitySize, Color.red, 0);
 
             var dir = (checkPoint - position).normalized;
             var radiusDir = mapSpace.GetMapDirection(dir) * Radius;
-
-            Debug.DrawLine(position, position + radiusDir, Color.yellow);
 
             // Get the closest point on the entity radius along the aim direction
             var closest = checkPoint -dir * entitySize;
@@ -120,28 +119,6 @@ public class MeleeAbility : Ability
             {
                 continue;
             }
-
-            // TODO: Maybe treat the entities as having circle colliders instead, cone -> circle is way easier to calculate.
-            //...
-
-            var perp = Vector2.Perpendicular(radiusDir);
-            var eDir = mapSpace.GetMapDirection(perp);
-
-            var rDir = mapSpace.GetMapDirection(perp);
-            var refl = Vector2.Reflect(rDir, eDir);
-
-            // Hmm, kinda more reliable at 45 degrees, still not great
-            var r = (Vector2)(Quaternion.Euler(0.0f, 0.0f, -45) * -dir);
-            var l = (Vector2)(Quaternion.Euler(0.0f, 0.0f, 45) * -dir);
-
-            var rightEdge = checkPoint + r * entitySize;
-            var leftEdge = checkPoint + l * entitySize;
-
-            Debug.DrawLine(checkPoint, rightEdge, Color.red);
-            Debug.DrawLine(checkPoint, leftEdge, Color.green);
-
-            var h1 = (rightEdge - position).normalized;
-            var h2 = (leftEdge - position).normalized;
 
             var a = NormalizedAngle(mapMinDir, mapMaxDir, dir);
 
@@ -171,69 +148,6 @@ public class MeleeAbility : Ability
 
                 Debug.DrawLine(checkPoint, cl, Color.green);
             }
-
-            entities.Add(hitEntity);
-            continue;
-
-            Debug.Log(a);
-
-            var a1 = NormalizedAngle(mapMinDir, mapMaxDir, h1);
-            var a2 = NormalizedAngle(mapMinDir, mapMaxDir, h2);
-
-            // If both points are not intersecting, the entity is not in the cone.
-            if ((a1 < 0.0f || a1 > 1.0f) && (a2 < 0.0f || a2 > 1.0f))
-            {
-                // TODO: Edge case: Angle can fully exceed the cone radius, say if the entity is larger than the radius of the cone...
-
-                continue;
-            }
-
-            entities.Add(hitEntity);
-
-            continue;
-
-            // FLAW: Seems that there are some cases where the Left/Right points of the entity radius
-            // are not correctly mapped. This will be due to the none-equally spaced cone angle.
-            // The left/right cone vectors are not guaranteed to be the same angle relative to the aim direction.
-            // We may need to project the circle edges onto a radius around the player (basically a curve) to
-            // get pixel perfect circle collisions.
-
-            var right = ((Vector2)Vector3.Cross(dir.normalized, Vector3.forward)).normalized;
-            var e1 = checkPoint + (right * entitySize);
-            var e2 = checkPoint - (right * entitySize);
-
-            Debug.DrawLine(position, e1, Color.yellow);
-            Debug.DrawLine(position, e2, Color.yellow);
-
-            var heading1 = (e1 - position).normalized;
-            var heading2 = (e2 - position).normalized;
-
-            var ang1 = NormalizedAngle(mapMinDir, mapMaxDir, heading1);
-            var ang2 = NormalizedAngle(mapMinDir, mapMaxDir, heading2);
-
-            // If both points are not intersecting, the entity is not in the cone.
-            if((ang1 < 0.0f || ang1 > 1.0f) && (ang2 < 0.0f || ang2 > 1.0f))
-            {
-                // TODO: Edge case: Angle can fully exceed the cone radius, say if the entity is larger than the radius of the cone...
-
-                continue;
-            }
-
-            // If the target is outside the entity radius (skewed into map space), ignore it.
-            var heading = mapSpace.GetMapDirection(dir) * Radius;     
-            if((dir.magnitude - entitySize) > heading.magnitude)
-            {
-                continue;
-            }
-
-
-
-            // NOTE: Dir = heading I think...
-
-            Debug.DrawLine(position, position + heading, Color.magenta);
-            Debug.DrawLine(position, position + (dir * 0.1f), Color.red);
-
-            //Debug.DrawLine(position, checkPoint, Color.green);
 
             entities.Add(hitEntity);
         }
