@@ -50,6 +50,7 @@ public class Entity : GameBehaviour
         // we need to ensure the Id is correctly transferred.
 
         UniqueId = Guid.NewGuid();
+        Direction = Direction;
     }
 
     protected override void Setup()

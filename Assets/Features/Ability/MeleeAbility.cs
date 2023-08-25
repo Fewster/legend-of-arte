@@ -11,7 +11,7 @@ public class MeleeAbility : Ability
     public float Radius = 1.0f;
     public LayerMask Mask;
 
-    [Range(0.0f, 90.0f)] // TODO: Consider having a minimum limitation of 22.5 to ensure no directional blindspots
+    [Range(22.5f, 90.0f)] // TODO: Consider having a minimum limitation of 22.5 to ensure no directional blindspots
     public float ConeAngle = 30.0f;
 
     private void OnEnable()
@@ -105,7 +105,7 @@ public class MeleeAbility : Ability
             var checkPoint = (Vector2)hit.transform.position;
             var entitySize = hitEntity.Size * 0.5f;
 
-            DebugExtensions.DrawCircle(checkPoint, entitySize, Color.red, 0);
+            DebugExtensions.DrawCircle(checkPoint, entitySize, Color.red, 0.2f);
 
             var dir = (checkPoint - position).normalized;
             var radiusDir = mapSpace.GetMapDirection(dir) * Radius;
@@ -129,11 +129,11 @@ public class MeleeAbility : Ability
                 var dst = Vector2.Distance(cl, checkPoint);
                 if(dst > entitySize)
                 {
-                    Debug.DrawLine(checkPoint, cl, Color.red);
+                    Debug.DrawLine(checkPoint, cl, Color.red, 0.2f);
                     continue;
                 }
 
-                Debug.DrawLine(checkPoint, cl, Color.green);
+                Debug.DrawLine(checkPoint, cl, Color.green, 0.2f);
             }
             else if(a < 0.0f) // To the right of the cone?
             {
@@ -142,19 +142,19 @@ public class MeleeAbility : Ability
                 var dst = Vector2.Distance(cl, checkPoint);
                 if (dst > entitySize)
                 {
-                    Debug.DrawLine(checkPoint, cl, Color.red);
+                    Debug.DrawLine(checkPoint, cl, Color.red, 0.2f);
                     continue;
                 }
 
-                Debug.DrawLine(checkPoint, cl, Color.green);
+                Debug.DrawLine(checkPoint, cl, Color.green, 0.2f);
             }
 
             entities.Add(hitEntity);
         }
 
         // Draw cone angles
-        Debug.DrawLine(position, position + mapMinDir * Radius, Color.white);
-        Debug.DrawLine(position, position + mapMaxDir * Radius, Color.white);
+        Debug.DrawLine(position, position + mapMinDir * Radius, Color.white, 0.2f);
+        Debug.DrawLine(position, position + mapMaxDir * Radius, Color.white, 0.2f);
     }
 
     private void DrawIsoCircle(Vector2 position, int segments, float radius, Color color, MapSpace mapSpace)
@@ -169,7 +169,7 @@ public class MeleeAbility : Ability
             //var a = position + new Vector2(radius * Mathf.Cos((i - 1) * mod), radius * Mathf.Sin((i - 1) * mod));
             //var b = position + new Vector2(radius * Mathf.Cos(i * mod), radius * Mathf.Sin(i * mod));
 
-            Debug.DrawLine(a, b, color);
+            Debug.DrawLine(a, b, color, 0.2f);
         }
     }
 }

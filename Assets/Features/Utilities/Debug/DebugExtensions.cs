@@ -4,6 +4,11 @@ using UnityEngine;
 
 public static class DebugExtensions 
 {
+    public static void DrawCone(Vector2 origin, float radius, Color color, float duration, float sizeX, float sizeY, float angle)
+    {
+
+    }
+
     public static void DrawCircle(Vector2 origin, float radius, Color color, float duration, int segments = 32)
     {
         DrawEllipse(origin, radius, color, duration, 1.0f, 1.0f, segments);

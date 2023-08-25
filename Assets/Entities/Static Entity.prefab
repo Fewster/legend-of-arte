@@ -10,8 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2953990786012869189}
   - component: {fileID: 2214833447537384701}
-  - component: {fileID: 673223720113504918}
   - component: {fileID: 9189861702045910061}
+  - component: {fileID: 3729582640810746557}
+  - component: {fileID: 9058071762417602498}
+  - component: {fileID: 6079675732244052658}
   m_Layer: 6
   m_Name: Static Entity
   m_TagString: Untagged
@@ -48,7 +50,41 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: static_dummy
---- !u!58 &673223720113504918
+  size: 0.2
+  direction: 0
+  OnDirectionSet:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &9189861702045910061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94308332502762936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d0fc0a4183bd1d428c0878a4558ccb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Current: 10
+  Max: 10
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9058071762417602498}
+        m_TargetAssemblyTypeName: SelfDestruct, Assembly-CSharp
+        m_MethodName: DestroySelf
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!58 &3729582640810746557
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,8 +118,8 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.25
---- !u!114 &9189861702045910061
+  m_Radius: 0.1
+--- !u!114 &9058071762417602498
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,11 +128,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 94308332502762936}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0fc0a4183bd1d428c0878a4558ccb2, type: 3}
+  m_Script: {fileID: 11500000, guid: fecee0d503a36b5458d284fcbd264543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Current: 100
-  Max: 100
+--- !u!50 &6079675732244052658
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 94308332502762936}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &674504784048962914
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,7 +520,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7014167347354654084}

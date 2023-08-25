@@ -17,7 +17,7 @@ public class PlayerAbilities : GameBehaviour
 
     private void Update()
     {
-        Cast();
+       // Cast();
     }
 
     public void Cast()

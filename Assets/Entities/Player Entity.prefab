@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: player
+  size: 1
   direction: 1
   OnDirectionSet:
     m_PersistentCalls:
@@ -162,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2550ddac52d148f4d8c27a719e81e2cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 0
+  MoveSpeed: 0.5
   direction: 1
   OnDirectionSet:
     m_PersistentCalls:
