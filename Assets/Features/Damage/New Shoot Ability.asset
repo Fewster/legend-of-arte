@@ -15,3 +15,5 @@ MonoBehaviour:
   Layer:
     serializedVersion: 2
     m_Bits: 4294967295
+  Projectile: {fileID: 94308332502762936, guid: 46c37f1eed972704cb114e8d27f3718e, type: 3}
+  SpawnDistance: 0.5
