@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ced99912db28fb6449e60b5e34c555db, type: 3}
-  m_Name: New Shoot Ability
+  m_Name: Fireball
   m_EditorClassIdentifier: 
   Layer:
     serializedVersion: 2
     m_Bits: 4294967295
-  Projectile: {fileID: 94308332502762936, guid: 46c37f1eed972704cb114e8d27f3718e, type: 3}
+  Projectile: {fileID: 4887583915625913179, guid: d91693518f80d4d499ac1da28d1d462c, type: 3}
   SpawnDistance: 0.5

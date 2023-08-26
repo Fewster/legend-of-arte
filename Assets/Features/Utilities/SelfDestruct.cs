@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class SelfDestruct : MonoBehaviour
 {
-    public void DestroySelf()
+    public float Lifetime = 1.0f;
+
+    private IEnumerator Start()
     {
+        yield return new WaitForSeconds(Lifetime);
         Destroy(gameObject);
     }
 }

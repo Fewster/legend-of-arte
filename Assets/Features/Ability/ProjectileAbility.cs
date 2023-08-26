@@ -21,7 +21,7 @@ public class ProjectileAbility : Ability
 
         var instance = Instantiate(Projectile);
         instance.transform.position = origin + dir * SpawnDistance;
-        //.transform.forward = dir;
+        instance.transform.forward = dir;
         instance.transform.parent = gameSpace.GetGameObject().transform;
     }
 }

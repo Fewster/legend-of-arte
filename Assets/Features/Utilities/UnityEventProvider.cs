@@ -11,4 +11,9 @@ public class UnityEventProvider : MonoBehaviour
     {
         OnStart?.Invoke();
     }
+
+    public void DestroySelf()
+    {
+        Destroy(gameObject);
+    }
 }

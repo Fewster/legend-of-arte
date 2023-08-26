@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Abilities/Melee")]
 public class MeleeAbility : Ability
 {
+    private const float DEBUG_DURATION = 1.0f;
+
     private List<Entity> entities;
 
     public int Damage = 10;
@@ -105,7 +107,7 @@ public class MeleeAbility : Ability
             var checkPoint = (Vector2)hit.transform.position;
             var entitySize = hitEntity.Size * 0.5f;
 
-            DebugExtensions.DrawCircle(checkPoint, entitySize, Color.red, 0.2f);
+            DebugExtensions.DrawCircle(checkPoint, entitySize, Color.red, DEBUG_DURATION);
 
             var dir = (checkPoint - position).normalized;
             var radiusDir = mapSpace.GetMapDirection(dir) * Radius;
@@ -129,11 +131,11 @@ public class MeleeAbility : Ability
                 var dst = Vector2.Distance(cl, checkPoint);
                 if(dst > entitySize)
                 {
-                    Debug.DrawLine(checkPoint, cl, Color.red, 0.2f);
+                    Debug.DrawLine(checkPoint, cl, Color.red, DEBUG_DURATION);
                     continue;
                 }
 
-                Debug.DrawLine(checkPoint, cl, Color.green, 0.2f);
+                Debug.DrawLine(checkPoint, cl, Color.green, DEBUG_DURATION);
             }
             else if(a < 0.0f) // To the right of the cone?
             {
@@ -142,19 +144,19 @@ public class MeleeAbility : Ability
                 var dst = Vector2.Distance(cl, checkPoint);
                 if (dst > entitySize)
                 {
-                    Debug.DrawLine(checkPoint, cl, Color.red, 0.2f);
+                    Debug.DrawLine(checkPoint, cl, Color.red, DEBUG_DURATION);
                     continue;
                 }
 
-                Debug.DrawLine(checkPoint, cl, Color.green, 0.2f);
+                Debug.DrawLine(checkPoint, cl, Color.green, DEBUG_DURATION);
             }
 
             entities.Add(hitEntity);
         }
 
         // Draw cone angles
-        Debug.DrawLine(position, position + mapMinDir * Radius, Color.white, 0.2f);
-        Debug.DrawLine(position, position + mapMaxDir * Radius, Color.white, 0.2f);
+        Debug.DrawLine(position, position + mapMinDir * Radius, Color.white, DEBUG_DURATION);
+        Debug.DrawLine(position, position + mapMaxDir * Radius, Color.white, DEBUG_DURATION);
     }
 
     private void DrawIsoCircle(Vector2 position, int segments, float radius, Color color, MapSpace mapSpace)
@@ -169,7 +171,7 @@ public class MeleeAbility : Ability
             //var a = position + new Vector2(radius * Mathf.Cos((i - 1) * mod), radius * Mathf.Sin((i - 1) * mod));
             //var b = position + new Vector2(radius * Mathf.Cos(i * mod), radius * Mathf.Sin(i * mod));
 
-            Debug.DrawLine(a, b, color, 0.2f);
+            Debug.DrawLine(a, b, color, DEBUG_DURATION);
         }
     }
 }
