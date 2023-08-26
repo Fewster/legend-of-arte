@@ -56,6 +56,56 @@ public static class DirectionExtensions
         }
     }
 
+    public static Vector2 ToDirection(this Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.North:
+                return new Vector2(0, 1);
+            case Direction.NorthEast:
+                return new Vector2(1, 1).normalized;
+            case Direction.East:
+                return new Vector2(1, 0);
+            case Direction.SouthEast:
+                return new Vector2(1,-1).normalized;
+            case Direction.South:
+                return new Vector2(0, -1);
+            case Direction.SouthWest:
+                return new Vector2(-1, -1).normalized;
+            case Direction.West:
+                return new Vector2(-1, 0);
+            case Direction.NorthWest:
+                return new Vector2(-1, 1).normalized;
+            default:
+                return Vector2.zero;
+        }
+    }
+
+    public static float To2DAngle(this Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.North:
+                return 0.0f;
+            case Direction.NorthEast:
+                return 45.0f;
+            case Direction.East:
+                return 90.0f;
+            case Direction.SouthEast:
+                return 135.0f;
+            case Direction.South:
+                return 180.0f;
+            case Direction.SouthWest:
+                return 225.0f;
+            case Direction.West:
+                return 270.0f;
+            case Direction.NorthWest:
+                return 315.0f;
+            default:
+                return 0.0f;
+        }
+    }
+
     public static Quaternion ToRotationAngle(this Direction direction)
     {
         switch (direction)

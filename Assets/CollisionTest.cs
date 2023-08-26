@@ -16,7 +16,7 @@ public class CollisionTest : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Handles.DrawWireDisc(transform.position, new Vector3(0,0,1), Radius);
+        //Handles.DrawWireDisc(transform.position, new Vector3(0,0,1), Radius);
     }
 
     private void Update()
@@ -27,7 +27,7 @@ public class CollisionTest : MonoBehaviour
         var cPos = grid.WorldToCell(pos);
         var wPos = grid.CellToWorld(cPos);
 
-        Debug.DrawLine(transform.position, wPos);
+      //  Debug.DrawLine(transform.position, wPos);
 
         var w = CheckRadius;
         var h = CheckRadius;

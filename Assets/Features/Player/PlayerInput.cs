@@ -86,7 +86,7 @@ public class PlayerInput : GameBehaviour
 
         if (mask != Direction.None)
         {
-            locomotion.Direction = mask;
+            pl.Direction = mask;
 
             var speed = 1.0f;
 

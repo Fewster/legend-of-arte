@@ -37,6 +37,10 @@ public class EntitySpawner : GameBehaviour
         var instance = Instantiate<Entity>(entity);
         instance.transform.SetParent(gameSpace.transform, false);
 
+        // TODO: We may want to let callers specify the spawn rotation
+        var initialDirection = Direction.North;
+        instance.transform.transform.rotation = initialDirection.ToRotationAngle();
+
         OnSpawned?.Invoke(instance);
 
         return instance;
