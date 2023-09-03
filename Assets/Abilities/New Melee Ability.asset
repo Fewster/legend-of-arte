@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cfa3d6845e319e4a9f08e0104e80f61, type: 3}
   m_Name: New Melee Ability
   m_EditorClassIdentifier: 
+  cooldown: 1
+  progress: 0
   Damage: 10
   Radius: 0.8
   Mask:

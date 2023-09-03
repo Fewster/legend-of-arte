@@ -9,6 +9,10 @@ public class AbilityCaster : MonoBehaviour
 
     public void Cast()
     {
-        ability.Cast(caster);
+        var result = ability.Cast(caster);
+        if (result.Status != CastStatus.Successful)
+        {
+            Debug.LogError($"{result.Error}");
+        }
     }
 }

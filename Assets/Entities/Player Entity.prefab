@@ -5012,6 +5012,7 @@ GameObject:
   - component: {fileID: 8470849425335759652}
   - component: {fileID: 6316516251828185800}
   - component: {fileID: 5731266066540502003}
+  - component: {fileID: 1495138478433010147}
   m_Layer: 0
   m_Name: Player Entity
   m_TagString: Untagged
@@ -5194,6 +5195,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1495138478433010147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6487214517117381263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7832c8e5f2aae98489c5ccd510dcd8c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entity: {fileID: 7915191799390132063}
+  abilities: []
 --- !u!1 &7538514561605409431
 GameObject:
   m_ObjectHideFlags: 0

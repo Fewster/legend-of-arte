@@ -1,5 +1,8 @@
 ﻿using Game.Framework;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Abilities/Melee")]
@@ -21,10 +24,9 @@ public class MeleeAbility : Ability
         entities = new List<Entity>();
     }
 
-    public override void Cast(Entity caster)
+    protected override Task OnCast(Entity caster, CancellationToken cancellation)
     {
         var mapSpace = caster.Resolver.Resolve<MapSpace>();
-
         var pos = caster.transform.position;
         var checkPoint = new Vector2(pos.x, pos.y);
 
@@ -52,6 +54,8 @@ public class MeleeAbility : Ability
         {
             DrawIsoCircle(checkPoint, 128, Radius, Color.red, mapSpace);
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -113,23 +117,23 @@ public class MeleeAbility : Ability
             var radiusDir = mapSpace.GetMapDirection(dir) * Radius;
 
             // Get the closest point on the entity radius along the aim direction
-            var closest = checkPoint -dir * entitySize;
+            var closest = checkPoint - dir * entitySize;
             var distance = Vector2.Distance(position, closest);
 
             // Outside the radius?
-            if(distance > radiusDir.magnitude)
+            if (distance > radiusDir.magnitude)
             {
                 continue;
             }
 
             var a = NormalizedAngle(mapMinDir, mapMaxDir, dir);
 
-            if(a > 1.0f) // To the left of the cone?
+            if (a > 1.0f) // To the left of the cone?
             {
                 var cl = ClosestPoint(position, position + (mapMaxDir * Radius), checkPoint);
 
                 var dst = Vector2.Distance(cl, checkPoint);
-                if(dst > entitySize)
+                if (dst > entitySize)
                 {
                     Debug.DrawLine(checkPoint, cl, Color.red, DEBUG_DURATION);
                     continue;
@@ -137,7 +141,7 @@ public class MeleeAbility : Ability
 
                 Debug.DrawLine(checkPoint, cl, Color.green, DEBUG_DURATION);
             }
-            else if(a < 0.0f) // To the right of the cone?
+            else if (a < 0.0f) // To the right of the cone?
             {
                 var cl = ClosestPoint(position, position + (mapMinDir * Radius), checkPoint);
 

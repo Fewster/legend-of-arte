@@ -7,9 +7,6 @@ public class PlayerAbilities : GameBehaviour
 {
     private LocalPlayer localPlayer;
 
-    // TODO: Multiple abilities
-    public Ability Ability;
-
     protected override void Setup()
     {
         localPlayer = Resolver.Resolve<LocalPlayer>();
@@ -25,7 +22,18 @@ public class PlayerAbilities : GameBehaviour
         var playerEntity = localPlayer.GetPlayerEntity();
         if (playerEntity != null)
         {
-            Ability.Cast(playerEntity);
+            var abilities = playerEntity.GetComponent<Abilities>();
+            if(abilities.Count > 0)
+            {
+                var ability = abilities[0];
+                var result = ability.Cast(playerEntity);
+                if (result.Status != CastStatus.Successful)
+                {
+                    Debug.LogError($"{result.Error}");
+                }
+            }
+
+            
         }
     }
 }

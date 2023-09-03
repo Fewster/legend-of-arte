@@ -1,6 +1,8 @@
 using Game.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Abilities/Projectile")]
@@ -10,10 +12,9 @@ public class ProjectileAbility : Ability
     public GameObject Projectile;
     public float SpawnDistance;
 
-    public override void Cast(Entity caster)
+    protected override Task OnCast(Entity caster, CancellationToken cancellation)
     {
         var gameSpace = caster.Resolver.Resolve<IGameSpace>();
-
         var origin = (Vector2)caster.transform.position;
         var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -23,5 +24,7 @@ public class ProjectileAbility : Ability
         instance.transform.position = origin + dir * SpawnDistance;
         instance.transform.forward = dir;
         instance.transform.parent = gameSpace.GetGameObject().transform;
+
+        return Task.CompletedTask;
     }
 }
