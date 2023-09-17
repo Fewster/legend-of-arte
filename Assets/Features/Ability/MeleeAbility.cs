@@ -98,12 +98,26 @@ public class MeleeAbility : AbilityComponent
         // Compute aim angles
         //var worldAimDir = source.Direction.ToDirection();
         var worldAimDir = source.transform.forward;
+
         var worldMinDir = (Quaternion.Euler(0.0f, 0.0f, -ConeAngle) * worldAimDir);
         var worldMaxDir = (Quaternion.Euler(0.0f, 0.0f, ConeAngle) * worldAimDir);
 
         // Convert poses to map space. This produces cone directions which map correctly to the world grid.
-        var mapMinDir = mapSpace.ToMap(worldMinDir);
-        var mapMaxDir = mapSpace.ToMap(worldMaxDir);
+        //var mapMinDir = mapSpace.ToMap(worldMinDir);
+        //var mapMaxDir = mapSpace.ToMap(worldMaxDir);
+
+        var mapMinDir = mapSpace.GetMapDirection(worldMinDir) * Radius;
+        var mapMaxDir = mapSpace.GetMapDirection(worldMaxDir) * Radius;
+
+        Debug.DrawLine(source.transform.position, source.transform.position + (Vector3)worldMinDir, Color.white, DEBUG_DURATION);
+        Debug.DrawLine(source.transform.position, source.transform.position + (Vector3)worldMaxDir, Color.white, DEBUG_DURATION);
+
+        Debug.DrawLine(source.transform.position, source.transform.position + (Vector3)mapMinDir, Color.magenta, DEBUG_DURATION);
+        Debug.DrawLine(source.transform.position, source.transform.position + (Vector3)mapMaxDir, Color.magenta, DEBUG_DURATION);
+
+        DebugExtensions.DrawCircle(source.transform.position, Radius, Color.red, DEBUG_DURATION, 32);
+
+        return;
 
         var hits = Physics2D.OverlapCircleAll(position, Radius, Mask);
         foreach (var hit in hits)

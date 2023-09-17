@@ -2,7 +2,13 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Locomotion : GameBehaviour
+public interface IEntityLocomotion
+{
+    void Aim(Vector2 direction);
+    void Move(Vector2 direction);
+}
+
+public class Locomotion : MonoBehaviour, IEntityLocomotion
 {
     [SerializeField]
     protected Entity entity;
@@ -24,29 +30,36 @@ public class Locomotion : GameBehaviour
         transform.position = position;
     }
 
-    public void Move(Vector2 amount)
+    public void Move(Vector2 direction)
     {
         var position = transform.position;
-        position += (Vector3)amount * MoveSpeed * Time.deltaTime;
+        position += (Vector3)direction * MoveSpeed * Time.deltaTime;
         position.z = 0.0f;
 
         transform.position = position;
-        transform.rotation = Quaternion.LookRotation(amount);
+    }
 
-        var dir = DirectionExtensions.GetNearestDirection(amount.normalized);
-        entity.Direction = dir;
+    public void Aim(Vector2 direction)
+    {
+        transform.rotation = Quaternion.LookRotation(direction);
+
+        var dir = DirectionExtensions.GetNearestDirection(direction.normalized);
+
+        // TODO: We may want to resolve the legs procedurally...
+
+        //OnAimDirectionSet?.Invoke(dir);
     }
 
     private void Update()
     {
+        var wPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var dir = wPos - transform.position;
+
         if (Input.GetMouseButton(0))
         {
-            var wPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            var dir = wPos - transform.position;
-
-            Debug.DrawLine(transform.position, transform.position + dir);
-
             Move(dir.normalized);
         }
+
+        //transform.rotation = Quaternion.LookRotation(dir);
     }
 }

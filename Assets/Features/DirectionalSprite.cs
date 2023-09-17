@@ -142,6 +142,8 @@ public static class DirectionExtensions
         var angle = Mathf.Atan2(value.x, value.y) * Mathf.Rad2Deg;
         var seg = (int)(angle / 22.5f);
 
+        Debug.Log($"{angle} {seg}");
+
         switch (seg)
         {
             case 1:
@@ -155,6 +157,7 @@ public static class DirectionExtensions
                 return Direction.SouthEast;
             case 7:
             case -7:
+            case 8:
                 return Direction.South;
             case -1:
             case -2:
