@@ -96,7 +96,8 @@ public class MeleeAbility : AbilityComponent
         entities.Clear();
 
         // Compute aim angles
-        var worldAimDir = source.Direction.ToDirection();
+        //var worldAimDir = source.Direction.ToDirection();
+        var worldAimDir = source.transform.forward;
         var worldMinDir = (Quaternion.Euler(0.0f, 0.0f, -ConeAngle) * worldAimDir);
         var worldMaxDir = (Quaternion.Euler(0.0f, 0.0f, ConeAngle) * worldAimDir);
 

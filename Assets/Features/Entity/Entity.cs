@@ -28,8 +28,14 @@ public class Entity : GameBehaviour
         }
         set
         {
+            // Ignore same value
+            if(value == Direction)
+            {
+                return;
+            }
+
             direction = value;
-            transform.rotation = direction.ToRotationAngle();
+            //transform.rotation = direction.ToRotationAngle();
             InvokeOnDirectionSet(value);
         }
     }
@@ -64,6 +70,18 @@ public class Entity : GameBehaviour
         if (store != null)
         {
             store.Unregister(this);
+        }
+    }
+
+    protected virtual void LateUpdate()
+    {
+        if (transform.hasChanged)
+        {
+            var dir2d = (Vector2)transform.forward;
+            var dir = DirectionExtensions.GetNearestDirection(dir2d);
+            Direction = dir;
+
+            transform.hasChanged = false;
         }
     }
 

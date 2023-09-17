@@ -47,6 +47,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: sphere
+  size: 1
+  direction: 0
+  OnDirectionSet:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1588030733812871024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,6 +64,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2550ddac52d148f4d8c27a719e81e2cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  entity: {fileID: 0}
   MoveSpeed: 1
 --- !u!1 &7432277695504148727
 GameObject:

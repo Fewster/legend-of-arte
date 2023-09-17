@@ -88,19 +88,19 @@ public static class DirectionExtensions
             case Direction.North:
                 return 0.0f;
             case Direction.NorthEast:
-                return 45.0f;
+                return -45.0f;
             case Direction.East:
-                return 90.0f;
+                return -90.0f;
             case Direction.SouthEast:
-                return 135.0f;
+                return -135.0f;
             case Direction.South:
                 return 180.0f;
             case Direction.SouthWest:
-                return 225.0f;
+                return 45.0f;
             case Direction.West:
-                return 270.0f;
+                return 90.0f;
             case Direction.NorthWest:
-                return 315.0f;
+                return 135.0f;
             default:
                 return 0.0f;
         }
@@ -136,4 +136,38 @@ public static class DirectionExtensions
     {
         return ToRotationAngle(direction) * Vector2.zero;
     }
+
+    public static Direction GetNearestDirection(Vector2 value)
+    {
+        var angle = Mathf.Atan2(value.x, value.y) * Mathf.Rad2Deg;
+        var seg = (int)(angle / 22.5f);
+
+        switch (seg)
+        {
+            case 1:
+            case 2:
+                return Direction.NorthEast;
+            case 3:
+            case 4:
+                return Direction.East;
+            case 5:
+            case 6:
+                return Direction.SouthEast;
+            case 7:
+            case -7:
+                return Direction.South;
+            case -1:
+            case -2:
+                return Direction.NorthWest;
+            case -3:
+            case -4:
+                return Direction.West;
+            case -5:
+            case -6:
+                return Direction.SouthWest;
+            default:
+                return Direction.North;
+        }
+    }
+
 }

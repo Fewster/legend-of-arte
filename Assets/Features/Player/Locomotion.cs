@@ -1,28 +1,20 @@
-﻿using UnityEngine;
+﻿using Game.Framework;
+using UnityEngine;
 using UnityEngine.Events;
 
-public class Locomotion : MonoBehaviour
+public class Locomotion : GameBehaviour
 {
+    [SerializeField]
+    protected Entity entity;
+
     public float MoveSpeed = 1.0f;
 
-    [SerializeField] protected Direction direction = Direction.North;
-
-    public Direction Direction 
-    { 
-        get 
-        { 
-            return direction; 
-        }
-        set
-        {
-            direction = value;
-            transform.rotation = direction.ToRotationAngle();
-            InvokeOnDirectionSet(value);
-        }
+    private void Reset()
+    {
+        entity = GetComponent<Entity>();
     }
 
-    public UnityEvent<Direction> OnDirectionSet;
-
+    [System.Obsolete]
     public void Move(float amount)
     {
         var position = transform.position;
@@ -32,8 +24,29 @@ public class Locomotion : MonoBehaviour
         transform.position = position;
     }
 
-    private void InvokeOnDirectionSet(Direction dir)
+    public void Move(Vector2 amount)
     {
-        OnDirectionSet?.Invoke(dir);
+        var position = transform.position;
+        position += (Vector3)amount * MoveSpeed * Time.deltaTime;
+        position.z = 0.0f;
+
+        transform.position = position;
+        transform.rotation = Quaternion.LookRotation(amount);
+
+        var dir = DirectionExtensions.GetNearestDirection(amount.normalized);
+        entity.Direction = dir;
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            var wPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var dir = wPos - transform.position;
+
+            Debug.DrawLine(transform.position, transform.position + dir);
+
+            Move(dir.normalized);
+        }
     }
 }

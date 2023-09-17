@@ -10,8 +10,11 @@ namespace Game.Framework
     {
         private Dictionary<Type, object> cache;
 
-        [SerializeField] protected Resolver parent;
-        [SerializeField] protected bool autoResolveParent;
+        [SerializeField]
+        protected Resolver parent;
+
+        [SerializeField, Tooltip("Whether the parent will be automatically discovered during the Start() method.")]
+        protected bool autoResolveParent = true;
 
         private void Awake()
         {
