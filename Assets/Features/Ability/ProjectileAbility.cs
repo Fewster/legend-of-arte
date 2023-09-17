@@ -5,17 +5,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Abilities/Projectile")]
-public class ProjectileAbility : Ability
+public class ProjectileAbility : AbilityComponent
 {
+    private IGameSpace gameSpace;
+
     public LayerMask Layer;
     public GameObject Projectile;
     public float SpawnDistance;
 
-    protected override Task OnCast(Entity caster, CancellationToken cancellation)
+    protected override void Setup()
     {
-        var gameSpace = caster.Resolver.Resolve<IGameSpace>();
-        var origin = (Vector2)caster.transform.position;
+        base.Setup();
+
+        gameSpace = Resolver.Resolve<IGameSpace>();
+    }
+
+    protected override Task OnCast(CancellationToken cancellation)
+    {
+        var origin = (Vector2)Entity.transform.position;
         var mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         var dir = (mousePosition - origin).normalized;

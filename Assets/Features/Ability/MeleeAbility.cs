@@ -5,12 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Abilities/Melee")]
-public class MeleeAbility : Ability
+public class MeleeAbility : AbilityComponent
 {
     private const float DEBUG_DURATION = 1.0f;
 
     private List<Entity> entities;
+    private MapSpace mapSpace;
 
     public int Damage = 10;
     public float Radius = 1.0f;
@@ -19,18 +19,23 @@ public class MeleeAbility : Ability
     [Range(22.5f, 90.0f)] // TODO: Consider having a minimum limitation of 22.5 to ensure no directional blindspots
     public float ConeAngle = 30.0f;
 
-    private void OnEnable()
+    private void Awake()
     {
         entities = new List<Entity>();
     }
 
-    protected override Task OnCast(Entity caster, CancellationToken cancellation)
+    protected override void Setup()
     {
-        var mapSpace = caster.Resolver.Resolve<MapSpace>();
-        var pos = caster.transform.position;
+        base.Setup();
+        mapSpace = Resolver.Resolve<MapSpace>();
+    }
+
+    protected override Task OnCast(CancellationToken cancellation)
+    {
+        var pos = Entity.transform.position;
         var checkPoint = new Vector2(pos.x, pos.y);
 
-        GatherNearbyEntities(checkPoint, caster, mapSpace);
+        GatherNearbyEntities(checkPoint, Entity, mapSpace);
 
         foreach (var entity in entities)
         {

@@ -11,8 +11,8 @@ public class SpawnPlayer : GameBehaviour
     public string PlayerEntityId;
     public EntitySpawner Spawner;
 
-    [SerializeField]
-    private List<Ability> abilities;
+    //[SerializeField]
+    //private List<Ability> abilities;
 
     protected override void Setup()
     {
@@ -30,10 +30,10 @@ public class SpawnPlayer : GameBehaviour
         }
 
         var abil = entity.GetComponent<Abilities>();
-        foreach(var ability in abilities)
-        {
-            abil.Add(ability);
-        }
+        //foreach(var ability in abilities)
+        //{
+           // abil.Add(ability);
+        //}
 
         player.SetPlayerEntity(entity);
         cameraSystem.SetFocus(entity.transform);

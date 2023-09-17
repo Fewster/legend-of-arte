@@ -10,19 +10,34 @@ namespace Game.Framework
     {
         private Dictionary<Type, object> cache;
 
-        [SerializeField] private Resolver parent;
+        [SerializeField] protected Resolver parent;
+        [SerializeField] protected bool autoResolveParent;
 
         private void Awake()
         {
             cache = new Dictionary<Type, object>();
         }
 
+        private void Start()
+        {
+            if (autoResolveParent && parent == null && transform.parent != null)
+            {
+                parent = transform.parent.GetComponentInParent<Resolver>();
+            }
+        }
+
         public object Resolve(Type type)
         {
             // Prioritise dependencies from ourselves before searching a potential parent
-            if(cache.TryGetValue(type, out object result))
+            if (cache.TryGetValue(type, out object result))
             {
                 return result;
+            }
+
+            if(parent == this)
+            {
+                Debug.LogError("circular-parent relation detected", this);
+                return null;
             }
 
             // Fallback to resolving items from the parent

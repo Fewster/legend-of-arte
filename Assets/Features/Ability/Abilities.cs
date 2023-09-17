@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Abilities : MonoBehaviour, IEnumerable<Ability>
+public class Abilities : MonoBehaviour, IEnumerable<AbilityComponent>
 {
     [SerializeField]
     protected Entity entity;
 
     [SerializeField] // TODO: Not serialized, needs to just show in inspector to help debugging...
-    private List<Ability> abilities;
+    private List<AbilityComponent> abilities;
 
     public int Count { get { return abilities.Count; } }
 
-    public Ability this[int index]
+    public AbilityComponent this[int index]
     {
         get { return abilities[index]; }
     }
 
     private void Awake()
     {
-        abilities = new List<Ability>();
+        abilities = new List<AbilityComponent>();
     }
 
     private void OnDestroy()
@@ -30,14 +30,14 @@ public class Abilities : MonoBehaviour, IEnumerable<Ability>
         }
     }
 
-    public void Add(Ability source)
+    public void Add(AbilityComponent source)
     {
         var instance = Instantiate(source);
 
         abilities.Add(instance);
     }
 
-    public IEnumerator<Ability> GetEnumerator()
+    public IEnumerator<AbilityComponent> GetEnumerator()
     {
         return abilities.GetEnumerator();
     }
